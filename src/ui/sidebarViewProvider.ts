@@ -553,6 +553,22 @@ export class Frame2CodeSidebarViewProvider implements vscode.WebviewViewProvider
       padding-top: 4px;
       opacity: 0.6;
     }
+    .footer-links {
+      margin-top: 6px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      opacity: 0.95;
+    }
+    .footer-link {
+      color: var(--vscode-textLink-foreground, #5AB8FF);
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .footer-link:hover {
+      text-decoration: underline;
+    }
 
     /* ── Hidden utility ───────────────────────────────────── */
     .hidden { display: none !important; }
@@ -889,7 +905,13 @@ export class Frame2CodeSidebarViewProvider implements vscode.WebviewViewProvider
     </details>
 
     <!-- ── Footer ─────────────────────────────────────────── -->
-    <div class="footer">Frame2Code v1.0.0 · MIT License</div>
+    <div class="footer">
+      <div>Frame2Code v1.0.0 · MIT License</div>
+      <div class="footer-links">
+        <a class="footer-link" href="https://www.linkedin.com/in/jewel-thomas50/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a class="footer-link" href="https://github.com/JewelArimattom/frame2code" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
 
   </div><!-- /container -->
 
