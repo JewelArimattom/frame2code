@@ -167,4 +167,12 @@ MIT — see [LICENSE.md](LICENSE.md)
 
 ---
 
+## Developer
+
+- Name: Jewel Thomas
+- GitHub: https://github.com/JewelArimattom/frame2code
+- LinkedIn: https://www.linkedin.com/in/jewel-thomas50/
+
+---
+
 *Frame2Code — Design to code, powered by AI.*
