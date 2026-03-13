@@ -1,0 +1,20 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" rx="20" fill="#1a1a2e"/>
+  <!-- Subtle grid dots for "design" feel -->
+  <circle cx="32" cy="32" r="2" fill="#ffffff" opacity="0.08"/>
+  <circle cx="64" cy="32" r="2" fill="#ffffff" opacity="0.08"/>
+  <circle cx="96" cy="32" r="2" fill="#ffffff" opacity="0.08"/>
+  <circle cx="32" cy="64" r="2" fill="#ffffff" opacity="0.08"/>
+  <circle cx="96" cy="64" r="2" fill="#ffffff" opacity="0.08"/>
+  <circle cx="32" cy="96" r="2" fill="#ffffff" opacity="0.08"/>
+  <circle cx="64" cy="96" r="2" fill="#ffffff" opacity="0.08"/>
+  <circle cx="96" cy="96" r="2" fill="#ffffff" opacity="0.08"/>
+  <!-- Frame corner handles — purple (Figma brand color) -->
+  <path d="M16 44V16H44" stroke="#A259FF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M84 16H112V44" stroke="#A259FF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16 84V112H44" stroke="#A259FF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M112 84V112H84" stroke="#A259FF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Code slash "/" — electric blue/cyan -->
+  <path d="M50 88L78 40" stroke="#5AB8FF" stroke-width="9" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,200 @@
+{
+  "name": "frame2code",
+  "displayName": "Frame2Code — Figma to Code with AI",
+  "description": "Connect Figma designs to AI coding agents via MCP. Extract structured design data, download assets, and generate production-ready UI code with React, Next.js, Vue, Svelte, and more.",
+  "version": "1.0.0",
+  "publisher": "frame2code",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frame2code/frame2code"
+  },
+  "bugs": {
+    "url": "https://github.com/frame2code/frame2code/issues"
+  },
+  "homepage": "https://github.com/frame2code/frame2code#readme",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning",
+    "Snippets",
+    "Visualization"
+  ],
+  "keywords": [
+    "figma",
+    "mcp",
+    "ai",
+    "code generation",
+    "design to code",
+    "figma to code",
+    "copilot",
+    "cursor",
+    "claude",
+    "react",
+    "tailwind",
+    "ui generation",
+    "model context protocol"
+  ],
+  "icon": "assets/icon.png",
+  "galleryBanner": {
+    "color": "#1a1a2e",
+    "theme": "dark"
+  },
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:frame2code.sidebar",
+    "onCommand:frame2code.connectFigma",
+    "onCommand:frame2code.disconnectFigma",
+    "onCommand:frame2code.selectFile",
+    "onCommand:frame2code.selectFrame",
+    "onCommand:frame2code.syncDesign",
+    "onCommand:frame2code.downloadAssets",
+    "onCommand:frame2code.generatePrompt",
+    "onCommand:frame2code.showStatus"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "frame2code",
+          "title": "Frame2Code",
+          "icon": "assets/frame2code-icon.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "frame2code.connectFigma",
+        "title": "Connect Figma Account",
+        "category": "Frame2Code",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "frame2code.disconnectFigma",
+        "title": "Disconnect Figma Account",
+        "category": "Frame2Code",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "frame2code.selectFile",
+        "title": "Select Figma File",
+        "category": "Frame2Code",
+        "icon": "$(file)"
+      },
+      {
+        "command": "frame2code.selectFrame",
+        "title": "Select Frame",
+        "category": "Frame2Code",
+        "icon": "$(layout)"
+      },
+      {
+        "command": "frame2code.syncDesign",
+        "title": "Sync Design Data",
+        "category": "Frame2Code",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "frame2code.downloadAssets",
+        "title": "Download Assets",
+        "category": "Frame2Code",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "frame2code.generatePrompt",
+        "title": "Generate AI Prompt",
+        "category": "Frame2Code",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "frame2code.showStatus",
+        "title": "Show Status",
+        "category": "Frame2Code",
+        "icon": "$(info)"
+      }
+    ],
+    "views": {
+      "frame2code": [
+        {
+          "id": "frame2code.sidebar",
+          "name": "Frame2Code",
+          "type": "webview"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Frame2Code",
+      "properties": {
+        "frame2code.defaultFramework": {
+          "type": "string",
+          "default": "react",
+          "enum": ["react", "nextjs", "vue", "svelte", "html"],
+          "enumDescriptions": [
+            "React with TypeScript",
+            "Next.js with App Router and TypeScript",
+            "Vue 3 with Composition API",
+            "Svelte 5 with Runes",
+            "Plain HTML, CSS, and JavaScript"
+          ],
+          "description": "Default framework for code generation prompts."
+        },
+        "frame2code.defaultStyling": {
+          "type": "string",
+          "default": "tailwind",
+          "enum": ["tailwind", "css-modules", "styled-components", "vanilla-css"],
+          "enumDescriptions": [
+            "Tailwind CSS utility classes",
+            "CSS Modules (component-scoped .module.css files)",
+            "Styled Components (CSS-in-JS)",
+            "Plain CSS with standard class names"
+          ],
+          "description": "Default styling approach for code generation prompts."
+        },
+        "frame2code.assetFormat": {
+          "type": "string",
+          "default": "svg",
+          "enum": ["svg", "png", "jpg"],
+          "description": "Default format for exported assets."
+        },
+        "frame2code.assetScale": {
+          "type": "number",
+          "default": 2,
+          "enum": [1, 2, 3, 4],
+          "description": "Scale factor for exported raster assets (PNG/JPEG)."
+        },
+        "frame2code.assetsDirectory": {
+          "type": "string",
+          "default": "assets",
+          "description": "Directory to save downloaded assets, relative to the workspace root."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "build": "node esbuild.js",
+    "build:watch": "node esbuild.js --watch",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.0",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@types/node-fetch": "^2.6.0",
+    "typescript": "^5.3.0",
+    "esbuild": "^0.20.0",
+    "@vscode/vsce": "^2.22.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0"
+  }
+}

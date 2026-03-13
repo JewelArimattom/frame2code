@@ -1,0 +1,42 @@
+# Source — not needed at runtime
+.vscode/**
+.vscode-test/**
+src/**
+**/*.ts
+**/*.map
+tsconfig.json
+esbuild.js
+
+# Config & lint
+.gitignore
+.gitattributes
+.eslintrc.json
+.editorconfig
+.npmrc
+
+# Dev scripts & artefacts
+generate-icon.js
+plan.md
+compile_errors.txt
+compile_errors2.txt
+ts_errors.txt
+errs.txt
+package_output.txt
+*.log
+
+# Git
+.git/**
+
+# Tests
+test/**
+**/*.test.*
+**/*.spec.*
+
+# NPM
+node_modules/**
+
+# Generated VSIX files
+*.vsix
+
+# Unneeded assets (SVG marketplace icon — icon.png is used for the marketplace listing)
+assets/marketplace-icon.svg
