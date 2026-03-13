@@ -906,7 +906,7 @@ export class Frame2CodeSidebarViewProvider implements vscode.WebviewViewProvider
 
     <!-- ── Footer ─────────────────────────────────────────── -->
     <div class="footer">
-      <div>Frame2Code v1.0.0 · MIT License</div>
+      <div>Frame2Code v1.0.1 · MIT License</div>
       <div class="footer-links">
         <a class="footer-link" href="https://www.linkedin.com/in/jewel-thomas50/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a class="footer-link" href="https://github.com/JewelArimattom/frame2code" target="_blank" rel="noopener noreferrer">GitHub</a>

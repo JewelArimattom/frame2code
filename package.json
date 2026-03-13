@@ -2,7 +2,7 @@
   "name": "frame2code",
   "displayName": "Frame2Code — Figma to Code with AI",
   "description": "Connect Figma designs to AI coding agents via MCP. Extract structured design data, download assets, and generate production-ready UI code with React, Next.js, Vue, Svelte, and more.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "frame2code",
   "author": "Jewel Thomas",
   "license": "MIT",
@@ -131,7 +131,13 @@
         "frame2code.defaultFramework": {
           "type": "string",
           "default": "react",
-          "enum": ["react", "nextjs", "vue", "svelte", "html"],
+          "enum": [
+            "react",
+            "nextjs",
+            "vue",
+            "svelte",
+            "html"
+          ],
           "enumDescriptions": [
             "React with TypeScript",
             "Next.js with App Router and TypeScript",
@@ -144,7 +150,12 @@
         "frame2code.defaultStyling": {
           "type": "string",
           "default": "tailwind",
-          "enum": ["tailwind", "css-modules", "styled-components", "vanilla-css"],
+          "enum": [
+            "tailwind",
+            "css-modules",
+            "styled-components",
+            "vanilla-css"
+          ],
           "enumDescriptions": [
             "Tailwind CSS utility classes",
             "CSS Modules (component-scoped .module.css files)",
@@ -156,13 +167,22 @@
         "frame2code.assetFormat": {
           "type": "string",
           "default": "svg",
-          "enum": ["svg", "png", "jpg"],
+          "enum": [
+            "svg",
+            "png",
+            "jpg"
+          ],
           "description": "Default format for exported assets."
         },
         "frame2code.assetScale": {
           "type": "number",
           "default": 2,
-          "enum": [1, 2, 3, 4],
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ],
           "description": "Scale factor for exported raster assets (PNG/JPEG)."
         },
         "frame2code.assetsDirectory": {
