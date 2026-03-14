@@ -6,6 +6,30 @@ and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) conventions.
 
 ---
 
+## [1.0.2] — 2026-03-14
+
+### 🐛 Bug Fixes
+
+#### Figma Token Guide
+- Corrected the token navigation path: **Settings → Security → Personal access tokens** (was incorrectly pointing to the top-level Settings page without the Security step)
+- Updated required token scopes to match Figma's current UI:
+  - **File content — Read** *(required)*
+  - **File metadata — Read** *(required, was incorrectly listed as "Files — Read")*
+  - **current_user:read** *(required, was missing)*
+
+### ✨ Improvements
+
+#### AI Prompt Copy-Paste Instructions
+- The "Generate AI Prompt" success notification now provides clear step-by-step instructions: select all text in the prompt document, copy it, and paste it into your AI agent (GitHub Copilot Chat, Claude, Cursor, ChatGPT, etc.)
+
+#### Marketplace & Discoverability
+- Added more search keywords to `package.json` for VS Code Marketplace search optimization
+- Added **Keywords** section to `README.md`
+- Updated README install command to reference current version
+- Bumped sidebar footer version to 1.0.2
+
+---
+
 ## [1.0.0] — 2026-03-13
 
 ### ✨ New Features
