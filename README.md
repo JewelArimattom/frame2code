@@ -6,6 +6,14 @@ Frame2Code is a VS Code extension that bridges Figma design files with AI coding
 
 ---
 
+## Screenshots
+
+![Frame2Code sidebar — connected to Figma with 6-step workflow](assets/image.png)
+
+> The sidebar guides you through every step: connect Figma → select file → pick frame → sync → download assets → generate & copy AI prompt.
+
+---
+
 ## Features
 
 - **🔗 One-click Figma connection** — Secure Personal Access Token authentication stored in VS Code's OS keychain
@@ -27,7 +35,7 @@ Frame2Code is a VS Code extension that bridges Figma design files with AI coding
 Install from the VS Code Marketplace, or from a VSIX:
 
 ```bash
-code --install-extension frame2code-1.0.2.vsix
+code --install-extension frame2code-1.0.3.vsix
 ```
 
 Or: **Extensions** → **⋯** → **Install from VSIX…**
@@ -166,6 +174,8 @@ Generates production-ready UI component code
 
 See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
+**1.0.3** — Step 6 now clearly says "Copy & paste the generated prompt to your AI". Fixed sidebar version badge. Added more marketplace keywords and Screenshots section.
+
 **1.0.2** — Fixed Figma token guide (correct navigation: Settings → Security → Personal access tokens; updated required scopes: File content, File metadata, current_user:read). Added AI prompt copy-paste instructions. Marketplace page improvements.
 
 **1.0.0** — Initial release: Figma connection, design parsing, asset export, MCP server, AI prompt generator, professional sidebar UI with built-in Figma setup guide.
@@ -174,7 +184,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
 ## Keywords
 
-figma, figma to code, design to code, ai code generation, mcp, model context protocol, react, nextjs, vue, svelte, tailwind, typescript, ui generation, component generation, pixel perfect, design tokens, github copilot, cursor, claude, chatgpt, vibe coding, frontend, design system
+figma, figma to code, figma mcp, figma ai, design to code, ai code generation, mcp, model context protocol, react, nextjs, vue, svelte, tailwind, tailwind css, typescript, ui generation, component generation, pixel perfect, design tokens, github copilot, cursor, claude, chatgpt, ai agent, copilot agent, windsurf, bolt, lovable, v0, vibe coding, frontend, design system, ui builder, no code, low code, auto layout, figma export, figma api, design automation, design handoff
 
 ---
 

@@ -6,6 +6,24 @@ and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) conventions.
 
 ---
 
+## [1.0.3] — 2026-03-14
+
+### 🐛 Bug Fixes
+
+#### Figma Token Guide
+- Corrected sidebar header badge from `v1.0.0` to `v1.0.3`
+
+### ✨ Improvements
+
+#### Generate Code Step
+- Step 6 description now reads **"Copy & paste the generated prompt to your AI"** so users know exactly what to do after clicking Go — no more guessing
+
+#### Marketplace & Discoverability
+- Added 16 new search keywords to `package.json` (figma mcp, figma ai, design automation, tailwind css, ai agent, copilot agent, windsurf, bolt, lovable, v0, ui builder, no code, low code, auto layout, figma export, figma api, design handoff)
+- Added **Screenshots** section to `README.md`
+
+---
+
 ## [1.0.2] — 2026-03-14
 
 ### 🐛 Bug Fixes

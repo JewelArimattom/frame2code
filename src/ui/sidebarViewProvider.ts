@@ -590,7 +590,7 @@ export class Frame2CodeSidebarViewProvider implements vscode.WebviewViewProvider
       <div class="header-title">Frame2Code</div>
       <div class="header-sub">Figma → AI → Code</div>
     </div>
-    <span class="header-badge">v1.0.0</span>
+    <span class="header-badge">v1.0.3</span>
   </div>
 
   <div class="container">
@@ -717,7 +717,7 @@ export class Frame2CodeSidebarViewProvider implements vscode.WebviewViewProvider
           <div class="step-num">6</div>
           <div class="step-body">
             <div class="step-name">Generate Code</div>
-            <div class="step-detail">Create AI-optimized prompt</div>
+            <div class="step-detail">Copy &amp; paste the generated prompt to your AI</div>
           </div>
           <div class="step-action">
             <button class="step-btn" id="btn-generate" data-command="frame2code.generatePrompt" disabled>
@@ -906,7 +906,7 @@ export class Frame2CodeSidebarViewProvider implements vscode.WebviewViewProvider
 
     <!-- ── Footer ─────────────────────────────────────────── -->
     <div class="footer">
-      <div>Frame2Code v1.0.2 · MIT License</div>
+      <div>Frame2Code v1.0.3 · MIT License</div>
       <div class="footer-links">
         <a class="footer-link" href="https://www.linkedin.com/in/jewel-thomas50/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a class="footer-link" href="https://github.com/JewelArimattom/frame2code" target="_blank" rel="noopener noreferrer">GitHub</a>
