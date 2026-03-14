@@ -91,7 +91,8 @@ export async function generatePromptCommand(
 
     Logger.info(`Generated AI prompt for ${frameworkChoice.label} + ${stylingChoice.label}`);
     vscode.window.showInformationMessage(
-      `✅ Frame2Code: AI prompt generated for ${frameworkChoice.label} + ${stylingChoice.label}. Copy and send to your AI agent!`
+      `✅ Frame2Code: AI prompt generated! Select all text in the editor (Ctrl+A / Cmd+A), copy it, and paste it into your AI agent (GitHub Copilot Chat, Claude, Cursor, ChatGPT, etc.) to generate the UI code.`,
+      'Got it'
     );
   } catch (error) {
     Logger.error('Failed to generate prompt', error);

@@ -27,7 +27,7 @@ Frame2Code is a VS Code extension that bridges Figma design files with AI coding
 Install from the VS Code Marketplace, or from a VSIX:
 
 ```bash
-code --install-extension frame2code-1.0.0.vsix
+code --install-extension frame2code-1.0.2.vsix
 ```
 
 Or: **Extensions** → **⋯** → **Install from VSIX…**
@@ -36,11 +36,13 @@ Or: **Extensions** → **⋯** → **Install from VSIX…**
 
 1. Log in to [figma.com](https://www.figma.com)
 2. Click your **profile picture** (top-left) → **Settings**
-3. Scroll to **Personal access tokens** → **Generate new token**
-4. Name it (e.g. `Frame2Code`), set an expiry, and enable:
+3. In the Settings sidebar, click **Security**
+4. Scroll to **Personal access tokens** → **Generate new token**
+5. Name it (e.g. `Frame2Code`), set an expiry, and enable:
    - **File content** — Read *(required)*
-   - **Files** — Read *(required)*
-5. Copy the token immediately — it won't be shown again
+   - **File metadata** — Read *(required)*
+   - **current_user:read** — Read *(required)*
+6. Copy the token immediately — it won't be shown again
 
 > **Security note:** Frame2Code stores your token exclusively in VS Code's built-in `SecretStorage` (the OS keychain). It is never written to disk, logged, or sent to any external service.
 
@@ -57,10 +59,17 @@ Open the **Frame2Code** panel in the VS Code Activity Bar (left sidebar) and fol
 | 5 | **Download Assets** — export images and icons to your workspace |
 | 6 | **Generate Code** — create an AI-optimized prompt |
 
-### 4 — Use with Your AI Agent
+### 4 — Generate & Use the AI Prompt
 
-The MCP server exposes 6 tools that AI agents call automatically when connected. Example prompt:
+After syncing your design, click **Generate Code** (Step 6 in the sidebar). Frame2Code opens a ready-to-use prompt document in the editor. To use it:
 
+1. **Select all** text in the prompt document (`Ctrl+A` / `Cmd+A`)
+2. **Copy** it (`Ctrl+C` / `Cmd+C`)
+3. **Paste** it into your AI agent chat (GitHub Copilot Chat, Claude, Cursor, ChatGPT, etc.)
+4. The AI will read the design specification and generate production-ready UI code
+
+> **Tip:** The MCP server also exposes 6 tools that AI agents can call automatically when connected via MCP. Example prompt:
+>
 > *"Using the Frame2Code MCP tools, inspect the synced design data and generate a production-ready React + Tailwind component."*
 
 ---
@@ -157,7 +166,15 @@ Generates production-ready UI component code
 
 See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
+**1.0.2** — Fixed Figma token guide (correct navigation: Settings → Security → Personal access tokens; updated required scopes: File content, File metadata, current_user:read). Added AI prompt copy-paste instructions. Marketplace page improvements.
+
 **1.0.0** — Initial release: Figma connection, design parsing, asset export, MCP server, AI prompt generator, professional sidebar UI with built-in Figma setup guide.
+
+---
+
+## Keywords
+
+figma, figma to code, design to code, ai code generation, mcp, model context protocol, react, nextjs, vue, svelte, tailwind, typescript, ui generation, component generation, pixel perfect, design tokens, github copilot, cursor, claude, chatgpt, vibe coding, frontend, design system
 
 ---
 
