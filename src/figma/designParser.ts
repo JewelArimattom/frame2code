@@ -25,11 +25,17 @@ import type {
 } from '../types/design';
 
 export class DesignParser {
+  /** Maximum recursion depth to prevent stack overflows on deeply nested designs */
+  private static readonly MAX_DEPTH = 10;
+  /** Cap total parsed elements to keep AI prompts within reasonable context limits */
+  private static readonly MAX_ELEMENTS = 500;
+
   private colorTokens: Map<string, ColorToken> = new Map();
   private typographyTokens: Map<string, TypographyToken> = new Map();
   private spacingValues: Set<number> = new Set();
   private borderRadiusValues: Set<number> = new Set();
   private assetReferences: AssetReference[] = [];
+  private elementCount = 0;
 
   /**
    * Parse a Figma frame node into a DesignFrame
@@ -43,6 +49,7 @@ export class DesignParser {
     this.spacingValues.clear();
     this.borderRadiusValues.clear();
     this.assetReferences = [];
+    this.elementCount = 0;
 
     const bounds = node.absoluteBoundingBox;
     const frame: DesignFrame = {
@@ -55,7 +62,7 @@ export class DesignParser {
       borderRadius: this.parseBorderRadius(node),
       overflow: node.clipsContent ? 'hidden' : 'visible',
       opacity: node.opacity,
-      children: this.parseChildren(node.children ?? [], node),
+      children: this.parseChildren(node.children ?? [], node, 0),
     };
 
     return frame;
@@ -80,15 +87,36 @@ export class DesignParser {
     return this.assetReferences;
   }
 
-  // ─── Children Parsing ──────────────────────────────────────────────────────
-
-  private parseChildren(children: FigmaNode[], parent: FigmaNode): DesignElement[] {
-    return children
-      .filter(child => child.visible !== false)
-      .map(child => this.parseElement(child, parent));
+  /**
+   * Total elements parsed (may be capped at MAX_ELEMENTS for very large designs)
+   */
+  getTotalElementCount(): number {
+    return this.elementCount;
   }
 
-  private parseElement(node: FigmaNode, parent: FigmaNode): DesignElement {
+  isTruncated(): boolean {
+    return this.elementCount >= DesignParser.MAX_ELEMENTS;
+  }
+
+  // ─── Children Parsing ──────────────────────────────────────────────────────
+
+  private parseChildren(children: FigmaNode[], parent: FigmaNode, depth: number): DesignElement[] {
+    if (depth >= DesignParser.MAX_DEPTH) {
+      Logger.debug(`Max depth (${DesignParser.MAX_DEPTH}) reached at node ${parent.name} — subtree truncated`);
+      return [];
+    }
+    return children
+      .filter(child => child.visible !== false)
+      .map(child => this.parseElement(child, parent, depth))
+      .filter((el): el is DesignElement => el !== null);
+  }
+
+  private parseElement(node: FigmaNode, parent: FigmaNode, depth: number): DesignElement | null {
+    this.elementCount++;
+    if (this.elementCount > DesignParser.MAX_ELEMENTS) {
+      // Hard cap — return a sentinel so the caller can summarize
+      return null;
+    }
     const bounds = node.absoluteBoundingBox;
     const parentBounds = parent.absoluteBoundingBox;
 
@@ -191,7 +219,21 @@ export class DesignParser {
 
     // Recursive children
     if (node.children && node.children.length > 0) {
-      element.children = this.parseChildren(node.children, node);
+      if (this.elementCount < DesignParser.MAX_ELEMENTS) {
+        const parsed = this.parseChildren(node.children, node, depth + 1);
+        if (parsed.length > 0) {
+          element.children = parsed;
+        }
+        // Note when we couldn't parse all children due to the element cap
+        const unparsed = node.children.filter(c => c.visible !== false).length - parsed.length;
+        if (unparsed > 0) {
+          (element as DesignElement & { _truncatedChildren?: number })._truncatedChildren = unparsed;
+        }
+      } else {
+        // At element cap — just record how many children were skipped
+        (element as DesignElement & { _truncatedChildren?: number })._truncatedChildren =
+          node.children.filter(c => c.visible !== false).length;
+      }
     }
 
     return element;

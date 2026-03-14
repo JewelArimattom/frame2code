@@ -63,6 +63,7 @@ export class AssetManager {
         fileKey,
         iconAssets,
         iconsDir,
+        workspaceFolder,
         iconFormat === 'svg' ? 'svg' : format,
         scale,
         (name) => {
@@ -80,6 +81,7 @@ export class AssetManager {
         fileKey,
         imageAssets,
         imagesDir,
+        workspaceFolder,
         imgFormat,
         scale,
         (name) => {
@@ -101,18 +103,21 @@ export class AssetManager {
     fileKey: string,
     assets: AssetReference[],
     outputDir: string,
+    workspaceFolder: string,
     format: 'svg' | 'png' | 'jpg',
     scale: number,
     onDownloaded: (name: string) => void
   ): Promise<AssetReference[]> {
+    // Deduplicate by nodeId
+    const uniqueAssets = Array.from(new Map(assets.map(a => [a.nodeId, a])).values());
     // Get image URLs from Figma (batch request)
-    const nodeIds = assets.map(a => a.nodeId);
+    const nodeIds = uniqueAssets.map(a => a.nodeId);
     const batchSize = 50; // Figma API limit
     const updatedAssets: AssetReference[] = [];
 
     for (let i = 0; i < nodeIds.length; i += batchSize) {
       const batch = nodeIds.slice(i, i + batchSize);
-      const batchAssets = assets.slice(i, i + batchSize);
+      const batchAssets = uniqueAssets.slice(i, i + batchSize);
 
       try {
         const imageResponse = await this.client.getImages(fileKey, batch, format, scale);
@@ -131,8 +136,14 @@ export class AssetManager {
           }
 
           try {
-            const fileName = this.sanitizeFileName(asset.nodeName) + `.${format}`;
+            // Build unique, deterministic filename: sanitizedName-shortNodeId.ext
+            // This prevents collisions when multiple nodes share the same display name.
+            const fileName = this.sanitizeFileName(asset.nodeName, asset.nodeId) + `.${format}`;
             const filePath = path.join(outputDir, fileName);
+            // Workspace-relative forward-slash path (used in generated code)
+            const relativePath = path
+              .relative(workspaceFolder, filePath)
+              .replace(/\\/g, '/');
 
             const imageBuffer = await this.client.downloadImage(imageUrl);
             fs.writeFileSync(filePath, imageBuffer);
@@ -141,6 +152,8 @@ export class AssetManager {
               ...asset,
               format,
               localPath: filePath,
+              relativePath,
+              fileName,
               downloadUrl: imageUrl,
             });
 
@@ -159,16 +172,26 @@ export class AssetManager {
   }
 
   /**
-   * Sanitize a file name to be safe for the filesystem
+   * Sanitize a file name and append a short nodeId suffix to guarantee uniqueness.
+   * Two nodes with identical display names will get different filenames.
    */
-  private sanitizeFileName(name: string): string {
-    return name
+  private sanitizeFileName(name: string, nodeId: string): string {
+    const base = name
       .toLowerCase()
       .replace(/[^a-z0-9_\-. ]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '')
-      .substring(0, 100) || 'asset';
+      .substring(0, 60) || 'asset';
+
+    // 8-char hex suffix derived from nodeId (e.g. "1:23" → "00000123")
+    const shortId = nodeId
+      .replace(/[^a-z0-9]/gi, '')
+      .substring(0, 8)
+      .toLowerCase()
+      .padEnd(8, '0');
+
+    return `${base}-${shortId}`;
   }
 
   /**
