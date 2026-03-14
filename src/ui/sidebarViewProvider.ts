@@ -763,9 +763,9 @@ export class Frame2CodeSidebarViewProvider implements vscode.WebviewViewProvider
         <div class="guide-step">
           <div class="guide-num">3</div>
           <div class="guide-content">
-            <div class="guide-title">Navigate to Personal Access Tokens</div>
+            <div class="guide-title">Go to Security → Personal Access Tokens</div>
             <div class="guide-desc">
-              Scroll down to the <strong>"Personal access tokens"</strong> section (or select it in the left sidebar). Click <strong>"Generate new token"</strong>.
+              In the Settings sidebar, click <strong>"Security"</strong>. Scroll to the <strong>"Personal access tokens"</strong> section and click <strong>"Generate new token"</strong>.
             </div>
           </div>
         </div>
@@ -788,15 +788,15 @@ export class Frame2CodeSidebarViewProvider implements vscode.WebviewViewProvider
             <div class="scope-list">
               <div class="scope-item">
                 <span class="scope-badge scope-required">Required</span>
-                <span><strong>File content</strong> — Read access (read design data &amp; nodes)</span>
+                <span><strong>File content</strong> — Read (read design data &amp; nodes)</span>
               </div>
               <div class="scope-item">
                 <span class="scope-badge scope-required">Required</span>
-                <span><strong>Files</strong> — Read access (list and open files)</span>
+                <span><strong>File metadata</strong> — Read (list and open files)</span>
               </div>
               <div class="scope-item">
-                <span class="scope-badge scope-optional">Optional</span>
-                <span><strong>File comments</strong> — Read (if you use comments in designs)</span>
+                <span class="scope-badge scope-required">Required</span>
+                <span><strong>current_user:read</strong> — Read (verify your Figma account)</span>
               </div>
             </div>
           </div>
@@ -906,7 +906,7 @@ export class Frame2CodeSidebarViewProvider implements vscode.WebviewViewProvider
 
     <!-- ── Footer ─────────────────────────────────────────── -->
     <div class="footer">
-      <div>Frame2Code v1.0.1 · MIT License</div>
+      <div>Frame2Code v1.0.2 · MIT License</div>
       <div class="footer-links">
         <a class="footer-link" href="https://www.linkedin.com/in/jewel-thomas50/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a class="footer-link" href="https://github.com/JewelArimattom/frame2code" target="_blank" rel="noopener noreferrer">GitHub</a>
