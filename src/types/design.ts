@@ -203,7 +203,12 @@ export interface AssetReference {
   nodeName: string;
   type: 'image' | 'icon' | 'vector';
   format: 'svg' | 'png' | 'jpg';
+  /** Absolute path on disk (set after download) */
   localPath?: string;
+  /** Workspace-relative forward-slash path, e.g. "assets/icons/icon-arrow-1a2b3c4d.svg" (set after download) */
+  relativePath?: string;
+  /** The sanitized filename on disk, e.g. "icon-arrow-1a2b3c4d.svg" */
+  fileName?: string;
   downloadUrl?: string;
 }
 

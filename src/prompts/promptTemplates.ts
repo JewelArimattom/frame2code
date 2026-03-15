@@ -1,10 +1,15 @@
 /**
  * AI Prompt Templates
  * Generates structured, optimized prompts for AI coding agents
- * to produce accurate UI code from design specifications
+ * to produce accurate UI code from design specifications.
+ *
+ * v1.1.0 improvements:
+ *  - Smart JSON compaction: strips null/undefined, limits child depth for large designs
+ *  - Exact asset paths: AI receives the deterministic filenames it must use in imports
+ *  - Large-design summary: hierarchy overview when total elements > 60
  */
 
-import type { DesignSpecification, DesignFrame, DesignTokens, AssetReference } from '../types/design';
+import type { DesignSpecification, DesignFrame, DesignElement, DesignTokens, AssetReference } from '../types/design';
 
 export type Framework = 'react' | 'nextjs' | 'vue' | 'svelte' | 'html';
 export type Styling = 'tailwind' | 'css-modules' | 'styled-components' | 'vanilla-css';
@@ -25,6 +30,14 @@ const DEFAULT_OPTIONS: PromptOptions = {
   includeDesignTokens: true,
   includeAssets: true,
 };
+
+// Maximum depth for the JSON tree in the prompt.  Subtrees beyond this depth
+// are collapsed to { name, type, childCount } to keep the prompt manageable.
+const JSON_MAX_DEPTH = 7;
+// When the total visible element count exceeds this threshold we also inject a
+// plain-text hierarchy overview so AI can understand the structure without
+// parsing thousands of lines of JSON.
+const LARGE_DESIGN_THRESHOLD = 60;
 
 /**
  * Generate a comprehensive AI prompt from a design specification
@@ -48,9 +61,9 @@ export function generatePrompt(
     sections.push(generateTokensSection(spec.designTokens));
   }
 
-  // Assets
+  // Assets — include whenever assets exist, but show "pending download" if paths are missing
   if (opts.includeAssets && spec.assets.length > 0) {
-    sections.push(generateAssetsSection(spec.assets));
+    sections.push(generateAssetsSection(spec.assets, opts.framework));
   }
 
   // Requirements
@@ -60,6 +73,117 @@ export function generatePrompt(
   sections.push(generateOutputSection(opts));
 
   return sections.join('\n\n---\n\n');
+}
+
+// ─── Design Section ────────────────────────────────────────────────────────────
+
+function generateDesignSection(frame: DesignFrame): string {
+  const totalElements = countAllElements(frame.children);
+
+  // Produce a compact JSON tree that stays within reasonable prompt size limits.
+  const compactFrame = compactDesignTree(frame as unknown as Record<string, unknown>, JSON_MAX_DEPTH);
+  const jsonStr = JSON.stringify(compactFrame, null, 2);
+
+  const isLarge = totalElements > LARGE_DESIGN_THRESHOLD;
+  const truncationNote = isLarge
+    ? `\n> ⚠️  **Large design** — ${totalElements}+ elements detected. The JSON tree below is depth-limited to ${JSON_MAX_DEPTH} levels. Review the **Component Hierarchy** section below for the full structure overview.\n`
+    : '';
+
+  let section = `# Design Specification
+${truncationNote}
+\`\`\`json
+${jsonStr}
+\`\`\`
+
+**Frame Details:**
+- Name: \`${frame.name}\`
+- Dimensions: ${frame.width} × ${frame.height}px
+- Layout: ${frame.layout.mode === 'none' ? 'Absolute positioning' : `Flex ${frame.layout.mode}`}
+- Top-level children: ${frame.children.length}
+- Total visible elements: ${totalElements}`;
+
+  // For large designs, add a plain-text hierarchy overview
+  if (isLarge) {
+    section += '\n\n## Component Hierarchy\n\n```\n' + buildHierarchy(frame.children, 0, 4) + '\n```';
+  }
+
+  return section;
+}
+
+/**
+ * Recursively compact a design tree for AI prompts.
+ * - Removes null / undefined values at every level.
+ * - Beyond maxDepth, collapses children to a short summary object.
+ */
+function compactDesignTree(node: Record<string, unknown>, maxDepth: number, depth = 0): Record<string, unknown> {
+  if (depth > maxDepth) {
+    // Return minimal stub for truncated subtrees
+    const stub: Record<string, unknown> = {
+      name: node['name'],
+      type: node['type'],
+    };
+    const children = node['children'];
+    if (Array.isArray(children) && children.length > 0) {
+      stub._childCount = children.length;
+      stub._note = `Subtree truncated at depth ${maxDepth}`;
+    }
+    return stub;
+  }
+
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(node)) {
+    if (value === null || value === undefined) {
+      continue;
+    }
+    if (key === 'children' && Array.isArray(value)) {
+      const kids = (value as Record<string, unknown>[]).map(
+        child => compactDesignTree(child, maxDepth, depth + 1)
+      );
+      if (kids.length > 0) {
+        result.children = kids;
+      }
+    } else if (typeof value === 'object' && !Array.isArray(value)) {
+      const compacted = compactDesignTree(value as Record<string, unknown>, maxDepth, depth + 1);
+      if (Object.keys(compacted).length > 0) {
+        result[key] = compacted;
+      }
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+/**
+ * Build a plain-text indented hierarchy for large-design overviews
+ */
+function buildHierarchy(
+  children: DesignElement[],
+  depth: number,
+  maxDepth: number
+): string {
+  const indent = '  '.repeat(depth);
+  const lines: string[] = [];
+  for (const child of children) {
+    const label = `${indent}[${child.type}] ${child.name} (${child.width}×${child.height})`;
+    lines.push(label);
+    if (child.children && child.children.length > 0 && depth < maxDepth) {
+      lines.push(buildHierarchy(child.children, depth + 1, maxDepth));
+    } else if (child.children && child.children.length > 0) {
+      lines.push(`${indent}  ... ${child.children.length} child element(s)`);
+    }
+  }
+  return lines.join('\n');
+}
+
+function countAllElements(children: DesignElement[]): number {
+  let count = children.length;
+  for (const child of children) {
+    if (child.children) {
+      count += countAllElements(child.children);
+    }
+  }
+  return count;
 }
 
 function generateHeader(opts: PromptOptions): string {
@@ -76,23 +200,6 @@ Generate production-ready, pixel-perfect UI code based on the following design s
 - Framework: ${frameworkName}
 - Styling: ${stylingName}
 - Responsive: ${opts.responsive ? 'Yes' : 'No'}`;
-}
-
-function generateDesignSection(frame: DesignFrame): string {
-  // Create a clean version of the frame data for the prompt
-  const cleanFrame = JSON.stringify(frame, null, 2);
-
-  return `# Design Specification
-
-\`\`\`json
-${cleanFrame}
-\`\`\`
-
-**Frame Details:**
-- Name: \`${frame.name}\`
-- Dimensions: ${frame.width} × ${frame.height}px
-- Layout: ${frame.layout.mode === 'none' ? 'Absolute positioning' : `Flex ${frame.layout.mode}`}
-- Children: ${frame.children.length} elements`;
 }
 
 function generateTokensSection(tokens: DesignTokens): string {
@@ -131,17 +238,57 @@ function generateTokensSection(tokens: DesignTokens): string {
   return lines.join('\n');
 }
 
-function generateAssetsSection(assets: AssetReference[]): string {
+function generateAssetsSection(assets: AssetReference[], framework: Framework): string {
+  const downloaded = assets.filter(a => a.relativePath);
+  const pending = assets.filter(a => !a.relativePath);
+
   const lines: string[] = ['# Assets'];
-  lines.push('\nThe following assets have been exported and saved locally:\n');
-  lines.push('| Asset | Type | Format | Path |');
-  lines.push('|-------|------|--------|------|');
 
-  assets.forEach(a => {
-    lines.push(`| ${a.nodeName} | ${a.type} | ${a.format} | ${a.localPath ?? 'pending'} |`);
-  });
+  if (downloaded.length > 0) {
+    lines.push('\n## Downloaded Assets — use EXACTLY these paths in your generated code\n');
+    lines.push('> ⚠️  **Important:** Use the `Path` column value verbatim when writing `import`, `src=`, or `url()` references. Do NOT guess or invent filenames — they include a unique ID suffix to avoid collisions.\n');
+    lines.push('| Asset Name | Type | Format | Path (workspace-relative) |');
+    lines.push('|------------|------|--------|--------------------------|');
+    downloaded.forEach(a => {
+      lines.push(`| ${a.nodeName} | ${a.type} | ${a.format} | \`${a.relativePath}\` |`);
+    });
 
-  lines.push('\nUse these asset paths in your generated code. Reference them relative to the component file.');
+    // Framework-specific import examples
+    const example = downloaded[0];
+    if (example) {
+      lines.push('\n**Import example:**');
+      if (framework === 'react' || framework === 'nextjs') {
+        if (framework === 'nextjs' && example.type === 'image') {
+          lines.push('```tsx');
+          lines.push(`import Image from 'next/image';`);
+          lines.push(`// <Image src="/${example.relativePath}" alt="${example.nodeName}" width={...} height={...} />`);
+          lines.push('```');
+        } else {
+          lines.push('```tsx');
+          lines.push(`import assetName from '../../${example.relativePath}'; // adjust relative path from component file`);
+          lines.push('```');
+        }
+      } else if (framework === 'vue') {
+        lines.push('```vue');
+        lines.push(`<img :src="'/' + '${example.relativePath}'" alt="${example.nodeName}" />`);
+        lines.push('```');
+      } else {
+        lines.push('```html');
+        lines.push(`<img src="/${example.relativePath}" alt="${example.nodeName}" />`);
+        lines.push('```');
+      }
+    }
+  }
+
+  if (pending.length > 0) {
+    lines.push('\n## Pending Assets — not yet downloaded\n');
+    lines.push('Run **Frame2Code: Download Assets** to get exact paths before generating code.\n');
+    lines.push('| Asset Name | Type | Node ID |');
+    lines.push('|------------|------|---------|');
+    pending.forEach(a => {
+      lines.push(`| ${a.nodeName} | ${a.type} | \`${a.nodeId}\` |`);
+    });
+  }
 
   return lines.join('\n');
 }

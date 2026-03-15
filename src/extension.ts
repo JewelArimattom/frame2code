@@ -209,6 +209,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           state.syncedData.assets,
           (downloadedAssets: AssetReference[]) => {
             state.downloadedAssets = downloadedAssets;
+
+            // Merge downloaded localPath / relativePath / fileName back into spec.assets
+            // so that the prompt generator always sees correct paths.
+            if (state.syncedData) {
+              const pathMap = new Map(downloadedAssets.map(a => [a.nodeId, a]));
+              state.syncedData.assets = state.syncedData.assets.map(a => {
+                const dl = pathMap.get(a.nodeId);
+                return dl ? { ...a, localPath: dl.localPath, relativePath: dl.relativePath, fileName: dl.fileName } : a;
+              });
+              mcpServer?.updateState(state);
+            }
+
             mcpServer?.updateState(state);
             sidebarViewProvider?.refresh();
           }

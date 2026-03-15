@@ -42,6 +42,12 @@ export async function syncDesign(
         const frame = parser.parseFrame(nodeData.document);
         const designTokens = parser.extractDesignTokens();
         const assets = parser.getAssetReferences();
+        const totalElements = parser.getTotalElementCount();
+        const truncated = parser.isTruncated();
+
+        if (truncated) {
+          Logger.warn(`Large design detected: element count hit the 500-element cap. The design tree has been partially parsed.`);
+        }
 
         // Step 3: Build the design specification
         progress.report({ message: 'Building design specification...', increment: 30 });
@@ -65,16 +71,17 @@ export async function syncDesign(
 
         // Statistics
         const stats = {
-          elements: countElements(frame.children ?? []),
+          elements: totalElements,
           colors: designTokens.colors.length,
           typography: designTokens.typography.length,
           assets: assets.length,
+          truncated,
         };
 
-        Logger.info(`Design synced: ${stats.elements} elements, ${stats.colors} colors, ${stats.typography} text styles, ${stats.assets} assets`);
+        Logger.info(`Design synced: ${stats.elements} elements, ${stats.colors} colors, ${stats.typography} text styles, ${stats.assets} assets${stats.truncated ? ' (tree truncated at 500-element cap)' : ''}`);
 
         vscode.window.showInformationMessage(
-          `✅ Frame2Code: Design synced — ${stats.elements} elements, ${stats.colors} colors, ${stats.assets} assets`
+          `✅ Frame2Code: Design synced — ${stats.elements}${stats.truncated ? '+ (large design)' : ''} elements, ${stats.colors} colors, ${stats.assets} assets`
         );
 
         progress.report({ message: 'Done!', increment: 10 });

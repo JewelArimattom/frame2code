@@ -6,6 +6,47 @@ and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) conventions.
 
 ---
 
+## [1.1.0] — 2026-03-14
+
+### ✨ Improvements
+
+#### Large & Complex Figma Design Support
+- **Depth-limited parsing** — recursion is now capped at **10 levels** deep, preventing stack overflows and hangs on deeply nested component trees
+- **Element count cap** — parser stops at **500 elements** and attaches a `_truncatedChildren` note so the prompt remains usable for very large screens
+- **Large-design prompt summary** — when a design has > 60 visible elements the generated AI prompt now includes a plain-text **Component Hierarchy** tree (4 levels deep) alongside the JSON spec, giving AI agents a readable overview without overwhelming context windows
+- **Smart JSON compaction** — the design JSON embedded in prompts is depth-capped at **7 levels** and strips all `null`/`undefined` values, reducing prompt size by up to 70 % on complex designs
+
+#### Asset Path & Filename Accuracy
+- **Unique, collision-free filenames** — downloaded assets are now named `sanitized-name-NODEID8.ext` (e.g. `icon-arrow-00000123.svg`). Two nodes that share a display name will no longer silently overwrite each other's file
+- **Workspace-relative paths** — every `AssetReference` now carries a `relativePath` field (e.g. `assets/icons/icon-arrow-00000123.svg`) in addition to the absolute `localPath`
+- **Automatic path merge** — after Download Assets completes, the workspace-relative paths are merged back into the design spec so they are immediately available to the prompt generator without re-syncing
+- **AI prompt asset guidance** — the *Assets* section of the generated prompt now shows the exact workspace-relative path the AI **must** use in `import` / `src` / `url()` references, with framework-specific import examples (React, Next.js `next/image`, Vue, HTML)
+- **Pending-asset reminder** — if assets haven't been downloaded yet the prompt now clearly says "Run Frame2Code: Download Assets to get exact paths" instead of showing `pending`
+- **Batch deduplication** — duplicate node IDs are filtered before calling the Figma Images API, reducing redundant network requests
+
+#### Sync Feedback
+- Progress notification now shows `500+ (large design)` for truncated frames so users know a large frame was partially parsed
+
+---
+
+## [1.0.3] — 2026-03-14
+
+### 🐛 Bug Fixes
+
+#### Figma Token Guide
+- Corrected sidebar header badge from `v1.0.0` to `v1.0.3`
+
+### ✨ Improvements
+
+#### Generate Code Step
+- Step 6 description now reads **"Copy & paste the generated prompt to your AI"** so users know exactly what to do after clicking Go — no more guessing
+
+#### Marketplace & Discoverability
+- Added 16 new search keywords to `package.json` (figma mcp, figma ai, design automation, tailwind css, ai agent, copilot agent, windsurf, bolt, lovable, v0, ui builder, no code, low code, auto layout, figma export, figma api, design handoff)
+- Added **Screenshots** section to `README.md`
+
+---
+
 ## [1.0.2] — 2026-03-14
 
 ### 🐛 Bug Fixes
