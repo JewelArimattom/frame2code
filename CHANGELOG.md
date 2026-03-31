@@ -6,6 +6,45 @@ and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) conventions.
 
 ---
 
+## [1.1.1] — 2026-03-31
+
+### ✨ Major Improvements
+
+#### Enhanced AI Prompts for 100% Design Fidelity
+- **New "100% Design Fidelity" directive**: AI prompts now explicitly instruct the AI to produce code that is visually **indistinguishable** from the Figma design — every pixel, spacing value, color, font size, shadow, and border radius must match exactly.
+- **File operation instructions**: Prompts now clearly tell the AI to **CREATE new files** or **EDIT/UPDATE existing files**, with specific file path templates and output format guidelines.
+- **Quality checklist**: Added an 8-point verification checklist to ensure all design properties are matched exactly before the AI completes.
+
+#### Smart Small Element Detection
+- **Automatic complex design detection**: The prompt generator now analyzes the design and detects when it contains small (<32px) or micro (<16px) elements that need special handling.
+- **⚠️ "Complex Composite Design" warning**: When intricate designs are detected (icons made of multiple parts, micro-spacing, layered elements), the prompt includes specific instructions for:
+  - Precise x/y coordinate positioning
+  - Z-index ordering preservation
+  - Micro-spacing accuracy (1-4px gaps)
+  - Grouped element handling with position: relative/absolute
+  - No scaling or resizing of small elements
+
+#### Detailed Styling Requirements
+- **Tailwind CSS**: Explicit instructions to use arbitrary values `[Xpx]` for exact measurements (e.g., `w-[347px]` instead of rounding to `w-80`). Use arbitrary colors for exact hex values.
+- **CSS Modules**: Emphasis on exact pixel values with examples of what NOT to round.
+- **Styled Components**: Exact pixel values with specific examples showing correct vs incorrect rounding.
+- **Vanilla CSS**: BEM naming, exact values, CSS custom properties for design tokens.
+
+#### Improved Layout Precision
+- Detailed instructions for handling `fixed`, `hug`, and `fill` sizing modes
+- Specific guidance for absolute positioning when `layout.mode: "none"`
+- EXACT gap and padding values from the design spec
+
+### 🔧 Technical Changes
+
+- Added `countAllElements()` function to count total elements in nested designs
+- Added `detectSmallElements()` function with configurable thresholds (32px small, 16px micro)
+- Added `DesignElement` type import for element analysis
+- Enhanced output section with framework-specific file path templates
+- Added component path logic for Next.js (`components/`) vs other frameworks (`src/components/`)
+
+---
+
 ## [1.0.2] — 2026-03-14
 
 ### 🐛 Bug Fixes

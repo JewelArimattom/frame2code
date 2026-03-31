@@ -6,6 +6,18 @@ Frame2Code is a VS Code extension that bridges Figma design files with AI coding
 
 ---
 
+## What's New in v1.1.1
+
+🎯 **100% Design Fidelity** — AI prompts now enforce exact pixel-perfect matching. No more "close enough" approximations.
+
+📁 **File Operations** — Prompts explicitly instruct AI to CREATE or EDIT files with proper file paths.
+
+🔍 **Smart Small Element Detection** — Automatically detects intricate designs with small components and adds special handling instructions.
+
+✅ **Quality Checklist** — Built-in verification checklist ensures all design properties are matched.
+
+---
+
 ## Features
 
 - **🔗 One-click Figma connection** — Secure Personal Access Token authentication stored in VS Code's OS keychain
@@ -17,6 +29,7 @@ Frame2Code is a VS Code extension that bridges Figma design files with AI coding
 - **🤖 MCP server** — 6 tools that AI agents can call to read your design data
 - **📝 Multi-framework prompts** — React, Next.js, Vue 3, Svelte 5, HTML/CSS
 - **🔒 Secure by design** — Tokens stored in the OS keychain, never passed to AI, strict webview CSP
+- **✨ 100% design fidelity** — Prompts enforce exact pixel values, no rounding or approximations
 
 ---
 
@@ -27,7 +40,7 @@ Frame2Code is a VS Code extension that bridges Figma design files with AI coding
 Install from the VS Code Marketplace, or from a VSIX:
 
 ```bash
-code --install-extension frame2code-1.0.2.vsix
+code --install-extension frame2code-1.1.1.vsix
 ```
 
 Or: **Extensions** → **⋯** → **Install from VSIX…**
@@ -165,6 +178,8 @@ Generates production-ready UI component code
 ## Release Notes
 
 See [CHANGELOG.md](CHANGELOG.md) for the full history.
+
+**1.1.1** — Enhanced AI prompts for 100% design fidelity. Smart detection of small/intricate elements with special handling. File operation instructions (CREATE/EDIT). Quality checklist. Detailed styling requirements for Tailwind, CSS Modules, Styled Components.
 
 **1.0.2** — Fixed Figma token guide (correct navigation: Settings → Security → Personal access tokens; updated required scopes: File content, File metadata, current_user:read). Added AI prompt copy-paste instructions. Marketplace page improvements.
 
